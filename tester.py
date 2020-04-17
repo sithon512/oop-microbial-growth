@@ -4,6 +4,8 @@ the classes can be referenced and used in isolation to ensure that they are
 working properly.
 """
 
+from pprint import pprint
+
 def test_nutrient():
 	"""
 	Test all aspects of the `Nutrient` class.
@@ -11,7 +13,7 @@ def test_nutrient():
 
 	from nutrient import Nutrient
 
-	print('='*80)
+	print('='*99)
 	print('TESTING `Nutrient`\n')
 
 	print('Testing class initialization:')
@@ -39,7 +41,7 @@ def test_nutrient():
 	new_nutrient.clearMoved()
 	print(f'\tAfter clear: {new_nutrient.getMoved()}')
 
-	print('='*80)
+	print('='*99)
 
 def test_microbe():
 	"""
@@ -49,7 +51,7 @@ def test_microbe():
 	from nutrient import Nutrient
 	from microbe import Microbe
 
-	print('='*80)
+	print('='*99)
 	print('TESTING `Microbe`\n')
 
 	print('Testing class initialization:')
@@ -74,7 +76,74 @@ def test_microbe():
 
 	# print('Testing `hasNutrient`:')
 
-	print('='*80)
+	print('='*99)
+
+def test_petricell():
+	"""
+	Tests all aspects of the `PetriCell` class.
+	"""
+
+	from petri import PetriCell
+	from nutrient import Nutrient
+
+	print('='*99)
+	print('TESTING `PetriCell`\n')
+
+	print('Testing class initialization:')
+	new_petricell = PetriCell()
+	print(f'\tNew petricell: "{new_petricell}"')
+	print(f'\tmicrobe value: {new_petricell.microbe}')
+	print(f'\tnutrients value: {new_petricell.nutrients}')
+
+	print('Adding microbe:')
+	print('\tBefore adding microbe: hasMicrobe == '
+		f'{new_petricell.hasMicrobe()}')
+	new_petricell.createMicrobe()
+	print('\tAfter adding microbe: hasMicrobe == '
+		f'{new_petricell.hasMicrobe()}')
+	print('Getting microbe:')
+	print(f'\tMicrobe: {new_petricell.getMicrobe()}')
+	print(f'\tNew string representation: {new_petricell}')
+
+	n = 9
+	print(f'Adding nutrients ({n}x):')
+	print(f'\tHas nutrients (pre-add): {new_petricell.hasNutrients()}')
+	# adding n nutrients
+	for i in range(n):
+		new_petricell.placeNutrient(Nutrient())
+	print(f'\tHas nutrients: {new_petricell.hasNutrients()}')
+	print(f'\tPetriCell status: {new_petricell}')
+
+	m = 2
+	print(f'Removing {m} nutrients, setting them moved, then replacing them:')
+	for i in range(m):
+		nutrient = new_petricell.getNutrient()
+		nutrient.setMoved()
+		new_petricell.placeNutrient(nutrient)
+	nut_status = [nut.getMoved() for nut in new_petricell.nutrients]
+	print(f'\tNutrients moved: {nut_status}')
+	unmoved_nutrients = new_petricell.getUnmoved()
+	print(f'\tUnmoved nutrients removed: {len(unmoved_nutrients)}')
+	print(f'\tPetriCell without unmoved nutrients: {new_petricell}')
+	print(f'\tMoving unmoved nutrients.')
+	moved_nutrients = []
+	for nutrient in unmoved_nutrients:
+		nutrient.setMoved()
+		moved_nutrients.append(nutrient)
+	del unmoved_nutrients
+	print(f'\tMarking remaining nutrients in PetriCell unmoved.')
+	new_petricell.clearAllMoved()
+	print(f'\tRe-adding nutrients.')
+	for nutrient in moved_nutrients:
+		new_petricell.placeNutrient(nutrient)
+	nut_status = [nut.getMoved() for nut in new_petricell.nutrients]
+	print(f'\tNutrients moved: {nut_status}')
+	print(f'Clearing all nutrient move status.')
+	new_petricell.clearAllMoved()
+	nut_status = [nut.getMoved() for nut in new_petricell.nutrients]
+	print(f'\tNutrients moved: {nut_status}')
+
+	print('='*99)
 
 if __name__ == '__main__':
 	"""
@@ -83,3 +152,4 @@ if __name__ == '__main__':
 
 	test_nutrient()
 	test_microbe()
+	test_petricell()
