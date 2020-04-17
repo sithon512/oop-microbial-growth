@@ -41,9 +41,45 @@ def test_nutrient():
 
 	print('='*80)
 
+def test_microbe():
+	"""
+	Test all aspects of the `Microbe` class.
+	"""
+
+	from nutrient import Nutrient
+	from microbe import Microbe
+
+	print('='*80)
+	print('TESTING `Microbe`\n')
+
+	print('Testing class initialization:')
+	new_microbe = Microbe()
+	print(f'\tNew microbe: {new_microbe}')
+	print(f'\theldNutrient value: {new_microbe.heldNutrient}')
+	print(f'\thasNutrient: {new_microbe.hasNutrient()}')
+
+	print('Taking nutrient:')
+	new_nutrient = Nutrient()
+	new_microbe.takeNutrient(new_nutrient)
+	print(f'\theldNutrient: {new_microbe.heldNutrient}')
+	print(f'\thasNutrient: {new_microbe.hasNutrient()}')
+	print('\tIf `hasNutrient` test returned true, implies success of '
+		'`takeNutrient`.')
+
+	print('Consuming nutrient:')
+	new_microbe.consumeNutrient()
+	print(f'\theldNutrient: {new_microbe.heldNutrient}')
+	print(f'\thasNutrient: {new_microbe.hasNutrient()}')
+	print('\tIf `hasNutrient` test returned false, implies success of `consumeNutrient`.')
+
+	# print('Testing `hasNutrient`:')
+
+	print('='*80)
+
 if __name__ == '__main__':
 	"""
 	If this module is run directly, then execute each of the testers in turn.
 	"""
 
 	test_nutrient()
+	test_microbe()
