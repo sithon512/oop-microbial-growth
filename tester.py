@@ -17,7 +17,7 @@ def test_nutrient():
 	print('Testing class initialization:')
 	new_nutrient = Nutrient()
 	print(f'\tNew nutrient: {new_nutrient}')
-	print(f'\thasMoved value: {new_nutrient.getMoved()}')
+	print(f'\thasMoved value: {new_nutrient.hasMoved}')
 
 	print('Testing `setMoved`:')
 	print(f'\tBefore move: {new_nutrient.getMoved()}')
