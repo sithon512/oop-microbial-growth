@@ -3,6 +3,7 @@ The classes contained in this module define a petri dish instance.
 """
 
 from microbe import Microbe
+from nutrient import Nutrient
 
 class PetriCell:
 	"""
@@ -49,7 +50,8 @@ class PetriCell:
 	def createMicrobe(self):
 		"""
 		Creates a new microbe instance and places it in the cell. This should
-		take place during the reproduction stage of the simulation.
+		take place during initialization and the reproduction stage of the
+		simulation.
 		"""
 
 		self.microbe = Microbe()
@@ -82,7 +84,7 @@ class PetriCell:
 
 		# get list of unmoved nutrients
 		unmoveds = [nutrient for nutrient in self.nutrients
-			if not nutrient.hasMoved()]
+			if not nutrient.getMoved()]
 
 		# remove unmoved nutrients from nutrients instance variable
 		self.nutrients = [nutrient for nutrient in self.nutrients
@@ -106,3 +108,111 @@ class PetriCell:
 		"""
 
 		self.nutrients.append(nutrient)
+
+class PetriDish:
+	"""
+	This class defines the dish grid in which `PetriCell` instances sit.
+	"""
+
+	def __init__(self, x, y, concentration, microbes):
+		"""
+		Initialize the class instance. Create the grid as a 2D list, place
+		PetriCell instances in each index, then begin assigning nutrients to
+		PetriCells based on concentration. Finally, place microbes according
+		to the locations described in the list of tuples passed as the
+		`microbes` argument.
+		"""
+
+		# define base grid
+		self.grid = [[None for j in range(y)] for i in range(x)]
+		# record x and y for easy reference later
+		self.x = x
+		self.y = y
+
+		# populate grid with lists of PetriCells
+		for i in range(x):
+			# self.grid[i] = []
+			for j in range(y):
+				self.grid[i][j] = PetriCell()
+
+		# import random for nutrient placement
+		from random import randint
+		# calculate number of nutrients
+		nutrients_to_place = int(concentration * x * y)
+		# place nutrients, may overlap
+		for i in range(nutrients_to_place):
+			place_x = randint(0, x-1)
+			place_y = randint(0, y-1)
+			self.grid[place_x][place_y].placeNutrient(Nutrient())
+
+		# place microbes
+		for coordx, coordy in microbes:
+			# note: ignores duplicate coords
+			self.grid[coordx][coordy].createMicrobe()
+
+	def __str__(self):
+		"""
+		Prints the grid of cells.
+		"""
+
+		output = ''
+
+		# x should iterate within y to create rows
+		for j in range(self.y):
+			row = ''
+			for i in range(self.x):
+				row += f'{self.grid[i][j]} '
+			row = f'{row.strip()}\n'
+			output += row
+
+		return output
+
+	def moveNutrients(self):
+		"""
+		Iterate through each cell in grid, moving nutrients that have not
+		moved yet.
+		"""
+
+		from random import randint
+
+		def coord_in_bounds(x, y):
+			"""
+			Checks if a position is on the grid or out of bounds.
+			"""
+
+			# if one of these conditions is true, then coord is not in bounds
+			return not (x < 0 or y < 0 or x > self.x - 1 or y > self.y - 1)
+
+		for i in range(self.x):
+			for j in range(self.y):
+				for nutrient in self.grid[i][j].getUnmoved():
+					shiftx = randint(-1, 1)
+					shifty = randint(-1, 1)
+					# if the coord was invalid, re-roll it
+					while not coord_in_bounds(i + shiftx, j + shifty):
+						shiftx = randint(-1, 1)
+						shifty = randint(-1, 1)
+
+					# place nutrient into the selected adjacent cell
+					self.grid[i+shiftx][j+shifty].placeNutrient(nutrient)
+					# mark the nutrient as having moved
+					nutrient.setMoved()
+
+	def checkMicrobes(self):
+		"""
+		For each microbe, check if it has a nutrient or has a nutrient in its
+		cell. If a nutrient is found, consume it. Records the position of the
+		offspring, then moves on to the next microbe. Once all microbes have
+		had a chance to try reproduction, the new microbes are placed onto the
+		grid.
+		"""
+
+		return
+
+	def step(self, iterations):
+		"""
+		Run through a number of iterations where one iteration is a call to
+		`moveNutrients` followed by a call to `checkMicrobes`.
+		"""
+
+		return
